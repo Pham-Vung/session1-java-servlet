@@ -1,12 +1,15 @@
 package org.example.session1.DAO;
 
+import org.example.session1.entity.Color;
 import org.example.session1.entity.Product;
 import org.example.session1.util.DbConnect;
 
 import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ProductDAO {
     private final DbConnect dbConnect = new DbConnect("jdbc:mysql://localhost:3306/shopee_db2", "root", "root");
@@ -165,6 +168,8 @@ public class ProductDAO {
             ResultSet generatedKeys = productStmt.getGeneratedKeys();
             if (generatedKeys.next()) {
                 int productId = generatedKeys.getInt(1);
+//                addProductColors(productId, product.getColors());
+//                addProductImages(productId, product.getImages());
 
                 try (PreparedStatement imageStmt = connection.prepareStatement(imageQuery)) {
                     for (String imageName : product.getImages()) {
@@ -175,58 +180,42 @@ public class ProductDAO {
                 }
                 return true;
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return false;
+    }
 
-//        Connection connection = null;
-//        PreparedStatement productStmt = null;
-//        PreparedStatement imageStmt = null;
-//
-//        try {
-//            connection = dbConnect.getConnection();
-//            connection.setAutoCommit(false);
-//
-//            String productQuery = "INSERT INTO shopee_db2.product (product_name, quantity) VALUES (?, ?)";
-//            productStmt = connection.prepareStatement(productQuery);
-//            productStmt.setString(1, product.getName());
-//            productStmt.setInt(2, product.getQuantity());
-//            productStmt.executeUpdate();
-//
-//            List<String> images = product.getImages();
-//            if (images != null && !images.isEmpty()) {
-//                String imageQuery = "INSERT INTO shopee_db2.image (image_name, product_id) VALUES (?, ?)";
-//                imageStmt = connection.prepareStatement(imageQuery);
-//
-//                for (String imageName : images) {
-//                    imageStmt.setString(1, imageName);
-//                    imageStmt.setInt(2, product.getId());
-//                    imageStmt.addBatch();
-//                }
-//                imageStmt.executeBatch();
-//            }
-//
-//            connection.commit();
-//            return true;
-//        } catch (SQLException e) {
-//            if (connection != null) {
-//                connection.rollback();
-//            }
-//            e.printStackTrace();
-//        } finally {
-//            if (productStmt != null) {
-//                productStmt.close();
-//            }
-//            if (imageStmt != null) {
-//                imageStmt.close();
-//            }
-//            if (connection != null) {
-//                connection.close();
-//            }
-//        }
-//        return false;
+    private void addProductImages(int productId, List<String> images) {
+        Connection connection = dbConnect.getConnection();
+        String query = "INSERT INTO shopee_db2.image (image_name, product_id) VALUES (?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            for (String image : images) {
+                stmt.setString(1, image);
+                stmt.setInt(2, productId);
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addProductColors(int productId, List<Color> colors) {
+        Connection connection = dbConnect.getConnection();
+        String query = "INSERT INTO shopee_db2.product_color (product_id, color_id) VALUES (?, ?)";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            for (Color color : colors) {
+                stmt.setInt(1, productId);
+                stmt.setInt(2, color.getId());
+                stmt.addBatch();
+            }
+            stmt.executeBatch();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     public boolean update(Product product, boolean isImageUpdated) {
@@ -317,5 +306,37 @@ public class ProductDAO {
             }
         }
         return result;
+    }
+
+    public List<Product> getUserProducts() {
+        String query = "SELECT p.id, p.product_name, p.quantity, i.image_name AS image_name " +
+                "FROM shopee_db2.product p LEFT JOIN shopee_db2.image i ON p.id = i.product_id " +
+                "ORDER BY p.id";
+        Connection conn = dbConnect.getConnection();
+
+        Map<Integer, Product> productMap = new HashMap<>();
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String productName = rs.getString("product_name");
+                int quantity = rs.getInt("quantity");
+                String imageName = rs.getString("image_name");
+
+                Product product = productMap.get(id);
+                if (product == null) {
+                    product = new Product(id, productName, quantity, new ArrayList<>());
+                    productMap.put(id, product);
+                }
+
+                if (imageName != null) {
+                    product.getImages().add(imageName);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return new ArrayList<>(productMap.values());
     }
 }

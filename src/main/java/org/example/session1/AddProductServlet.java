@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import org.example.session1.DAO.ProductDAO;
+import org.example.session1.entity.Color;
 import org.example.session1.entity.Product;
 
 import java.io.File;
@@ -32,6 +33,14 @@ public class AddProductServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("name");
         int quantity = Integer.parseInt(request.getParameter("quantity"));
+
+//        String[] colorIds = request.getParameterValues("colors");
+//        List<Color> colors = new ArrayList<>();
+//        if (colorIds != null) {
+//            for (String colorId : colorIds) {
+//                colors.add(new Color(Integer.parseInt(colorId), ""));
+//            }
+//        }
 
         String path = getServletContext().getRealPath("") + File.separator + "uploads";
         File file = new File(path);

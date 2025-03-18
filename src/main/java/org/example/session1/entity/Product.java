@@ -15,12 +15,13 @@ public class Product {
     private int id;
     private String name;
     private int quantity;
-    //    private Blob image;
     private List<String> images;
+//    private List<Color> colors;
 
     public Product(String name, int quantity, List<String> images) {
         this.name = name;
         this.quantity = quantity;
         this.images = images;
+//        this.colors = colors;
     }
 }

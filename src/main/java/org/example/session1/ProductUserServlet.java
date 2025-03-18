@@ -12,8 +12,8 @@ import org.example.session1.entity.Product;
 import java.io.IOException;
 import java.util.List;
 
-@WebServlet(name = "productServlet", value = "/product-servlet")
-public class ProductServlet extends HttpServlet {
+@WebServlet(name = "productUserServlet", value = "/product-user-servlet")
+public class ProductUserServlet extends HttpServlet {
     private ProductDAO productDAO;
 
     @Override
@@ -24,12 +24,12 @@ public class ProductServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         List<Product> products;
-        products = productDAO.getAllProducts();
+        products = productDAO.getUserProducts();
 
 //        HttpSession session = req.getSession();
 //        session.setAttribute("products", products);
         req.setAttribute("products", products);
-        RequestDispatcher dispatcher = req.getRequestDispatcher("product.jsp");
+        RequestDispatcher dispatcher = req.getRequestDispatcher("product-user.jsp");
         dispatcher.forward(req, resp);
     }
 }

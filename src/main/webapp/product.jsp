@@ -31,23 +31,6 @@
         <%--        add product--%>
         <div class="py-2 px-5 modal fade" id="exampleModal" tabindex="-1"
              aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <%--            <h1>Thêm sản phẩm</h1>--%>
-            <%--            <form action="add-product" method="post">--%>
-            <%--                <div class="input-group mb-3">--%>
-            <%--                    <label class="input-group-text" for="product-name">Tên</label>--%>
-            <%--                    <input type="text" class="form-control" name="product-name" id="product-name">--%>
-            <%--                </div>--%>
-
-            <%--                <div class="input-group mb-3">--%>
-            <%--                    <label class="input-group-text" for="quantity">Số lượng</label>--%>
-            <%--                    <input type="number" class="form-control" name="quantity" id="quantity"--%>
-            <%--                           min="1"--%>
-            <%--                           value="1"--%>
-            <%--                           step="1">--%>
-            <%--                </div>--%>
-            <%--                <button class="btn btn-success" type="submit">Thêm</button>--%>
-            <%--            </form>--%>
-
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -69,11 +52,17 @@
                                        step="1">
                             </div>
 
+<%--                            <div class="input-group mb-3">--%>
+<%--                                <label class="input-group-text">Màu sắc</label>--%>
+<%--                                <select id="colors" name="colors" multiple class="form-select">--%>
+<%--                                    <c:forEach var="color" items="${colorList}">--%>
+<%--                                        <option value="${color.id}">${color.name}</option>--%>
+<%--                                    </c:forEach>--%>
+<%--                                </select>--%>
+<%--                            </div>--%>
+
                             <div class="input-group mb-3">
-<%--                                <label class="input-group-text" for="image">Ảnh</label>--%>
                                 <input type="file" multiple class="form-control mb-2" name="image" id="image" accept="image/**">
-                                <br>
-<%--                                <img id="imagePreview" class="image-preview img-fluid" src="">--%>
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -130,11 +119,6 @@
                     class="form-control"
                     onkeyup="fetchSearchProducts()"
             >
-            <%--            <button type="submit" class="btn btn-success">--%>
-            <%--                <i class="fa-solid fa-magnifying-glass"></i>--%>
-            <%--            </button>--%>
-            <%--            </form>--%>
-            <%--            <input type="text" class="">--%>
         </div>
     </div>
     <div class="product-list">
@@ -182,8 +166,6 @@
                 renderProducts(result);
             })
             .catch(err => console.error(err));
-        // console.log(select);
-        // window.location.href = 'http://localhost:8080/session1_war_exploded/sort-product-servlet?sort=' + select;
     }
 
     const renderProducts = (data) => {
@@ -224,9 +206,6 @@
             .catch(err => console.error(err));
     }
 
-    // window.onload = () => {
-    //     fetchSearchProducts();
-    // }
     var flag = "${param.error}";
     console.log(flag);
 

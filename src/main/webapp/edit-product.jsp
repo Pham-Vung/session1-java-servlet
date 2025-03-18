@@ -40,12 +40,12 @@
             <input type="hidden" name="isImageUpdated" id="isImageUpdated" value="false">
             <input type="file" class="form-control" name="image" id="image" accept="image/**" multiple>
         </div>
-
         <div id="productImagesCarousel" class="carousel slide mb-3" data-bs-ride="carousel">
             <div class="carousel-inner" id="carouselInner">
                 <c:forEach var="img" items="${product.getImages()}" varStatus="status">
                     <div class="carousel-item ${status.first ? 'active' : ''}">
-                        <img src="uploads/${img}" class="d-block w-100 product-image">
+                        <img src="uploads/${img}" class="d-block w-100 product-image"
+                             style="height: 200px; object-fit: cover">
                     </div>
                 </c:forEach>
             </div>
@@ -58,6 +58,7 @@
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
             </button>
         </div>
+
         <button class="btn btn-warning" type="submit">Lưu</button>
     </form>
 </div>
