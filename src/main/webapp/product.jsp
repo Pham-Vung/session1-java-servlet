@@ -52,18 +52,25 @@
                                        step="1">
                             </div>
 
-<%--                            <div class="input-group mb-3">--%>
-<%--                                <label class="input-group-text">Màu sắc</label>--%>
-<%--                                <select id="colors" name="colors" multiple class="form-select">--%>
-<%--                                    <c:forEach var="color" items="${colorList}">--%>
-<%--                                        <option value="${color.id}">${color.name}</option>--%>
-<%--                                    </c:forEach>--%>
-<%--                                </select>--%>
-<%--                            </div>--%>
-
                             <div class="input-group mb-3">
-                                <input type="file" multiple class="form-control mb-2" name="image" id="image" accept="image/**">
+                                <input type="file" multiple class="form-control mb-2" name="image" id="image"
+                                       accept="image/**">
                             </div>
+
+
+                            <select class="form-select" name="sizes" id="sizes" multiple
+                                    data-live-search="true">
+                                <c:forEach var="size" items="${sizes}">
+                                    <option value="${size.getId()}">${size.getName()}</option>
+                                </c:forEach>
+                            </select>
+
+                            <select class="form-select" name="colors" id='colors' multiple
+                                    data-live-search="true">
+                                <c:forEach var="color" items="${colors}">
+                                    <option value="${color.getId()}">${color.getName()}</option>
+                                </c:forEach>
+                            </select>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
@@ -157,6 +164,8 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.1/js/bootstrap-select.min.js"></script>
 <script>
     const fetchSortProducts = () => {
         let select = document.getElementById("sortSelect").value;
@@ -207,7 +216,6 @@
     }
 
     var flag = "${param.error}";
-    console.log(flag);
 
     if (flag && flag.trim() !== "") {
         var isError = flag === "true";

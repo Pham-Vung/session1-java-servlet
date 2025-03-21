@@ -36,6 +36,21 @@
                    step="1">
         </div>
 
+        <div class="mb-3">
+            <select class="form-select" name="sizes" id="sizes" multiple>
+                <c:forEach var="size" items="${product.getSizes()}">
+                    <option value="${size.getId()}">${size.getName()}</option>
+                </c:forEach>
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <select class="form-select" name="colors" id='colors' multiple>
+                <c:forEach var="color" items="${product.getColors()}">
+                    <option value="${color.getId()}">${color.getName()}</option>
+                </c:forEach>
+            </select>
+        </div>
         <div class="input-group mb-3">
             <input type="hidden" name="isImageUpdated" id="isImageUpdated" value="false">
             <input type="file" class="form-control" name="image" id="image" accept="image/**" multiple>

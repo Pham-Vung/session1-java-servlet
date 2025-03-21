@@ -8,12 +8,15 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import org.example.session1.DAO.ProductDAO;
+import org.example.session1.DAO.SizeDAO;
 import org.example.session1.entity.Color;
 import org.example.session1.entity.Product;
+import org.example.session1.entity.Size;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @WebServlet(name = "addProduct", value = "/add-product")
@@ -24,23 +27,41 @@ import java.util.List;
 )
 public class AddProductServlet extends HttpServlet {
     private ProductDAO productDAO;
+    private SizeDAO sizeDAO;
 
     @Override
     public void init() {
         productDAO = new ProductDAO();
+        sizeDAO = new SizeDAO();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("name");
+        String name = request.getParameter("product-name");
         int quantity = Integer.parseInt(request.getParameter("quantity"));
+        String[] selectedColors = request.getParameterValues("colors");
+        String[] selectedSizes = request.getParameterValues("sizes");
 
-//        String[] colorIds = request.getParameterValues("colors");
-//        List<Color> colors = new ArrayList<>();
-//        if (colorIds != null) {
-//            for (String colorId : colorIds) {
-//                colors.add(new Color(Integer.parseInt(colorId), ""));
-//            }
-//        }
+        for (String s : selectedSizes) {
+            System.out.println(s);
+        }
+
+        for (String s : selectedColors) {
+            System.out.println(s);
+        }
+
+        List<Color> colorList = new ArrayList<>();
+        if (selectedColors != null) {
+            for (String colorId : selectedColors) {
+                colorList.add(new Color(Integer.parseInt(colorId), ""));
+            }
+        }
+
+        List<Size> sizesList = new ArrayList<>();
+        if (selectedSizes != null) {
+            for (String sizeId : selectedSizes) {
+                sizesList.add(new Size(Integer.parseInt(sizeId), ""));
+            }
+        }
 
         String path = getServletContext().getRealPath("") + File.separator + "uploads";
         File file = new File(path);
@@ -58,7 +79,7 @@ public class AddProductServlet extends HttpServlet {
             }
         }
 
-        Product product = new Product(name, quantity, images);
+        Product product = new Product(name, quantity, images, colorList, sizesList);
         boolean result = productDAO.addProduct(product);
         if (result) {
             response.sendRedirect("product-servlet?error=false");

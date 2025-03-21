@@ -16,12 +16,14 @@ public class Product {
     private String name;
     private int quantity;
     private List<String> images;
-//    private List<Color> colors;
+    private List<Color> colors;
+    private List<Size> sizes;
 
-    public Product(String name, int quantity, List<String> images) {
+    public Product(String name, int quantity, List<String> images, List<Color> colors, List<Size> sizes) {
         this.name = name;
         this.quantity = quantity;
         this.images = images;
-//        this.colors = colors;
+        this.colors = colors;
+        this.sizes = sizes;
     }
 }
