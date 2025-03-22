@@ -38,16 +38,21 @@
 
         <div class="mb-3">
             <select class="form-select" name="sizes" id="sizes" multiple>
-                <c:forEach var="size" items="${product.getSizes()}">
-                    <option value="${size.getId()}">${size.getName()}</option>
+                <c:forEach var="size" items="${allSizes}">
+                    <option value="${size.getId()}" <c:if test="${selectedSizes.contains(size.getName())}">selected</c:if>>
+                            ${size.getName()}
+                    </option>
                 </c:forEach>
             </select>
         </div>
 
         <div class="mb-3">
             <select class="form-select" name="colors" id='colors' multiple>
-                <c:forEach var="color" items="${product.getColors()}">
-                    <option value="${color.getId()}">${color.getName()}</option>
+                <c:forEach var="color" items="${allColors}">
+                    <option value="${color.getId()}"
+                            <c:if test="${selectedColors.contains(color.getName())}">selected</c:if>>
+                            ${color.getName()}
+                    </option>
                 </c:forEach>
             </select>
         </div>

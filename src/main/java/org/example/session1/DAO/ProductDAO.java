@@ -60,36 +60,6 @@ public class ProductDAO {
     }
 
     public Product getById(int id) {
-//        String query = "SELECT p.id, p.product_name, p.quantity, i.image_name AS image_name " +
-//                "FROM shopee_db2.product p LEFT JOIN shopee_db2.image i ON p.id = i.product_id " +
-//                "WHERE p.id = ?";
-//        Connection conn = dbConnect.getConnection();
-//        try (PreparedStatement statement = conn.prepareStatement(query)) {
-//            statement.setInt(1, id);
-//            ResultSet resultSet = statement.executeQuery();
-//
-//            Product product = null;
-//            List<String> imageNames = new ArrayList<>();
-//            while (resultSet.next()) {
-//                if (product == null) {
-//                    product = new Product();
-//                    product.setId(resultSet.getInt("id"));
-//                    product.setName(resultSet.getString("product_name"));
-//                    product.setQuantity(resultSet.getInt("quantity"));
-//                }
-//                if (resultSet.getString("image_name") != null) {
-//                    imageNames.add(resultSet.getString("image_name"));
-//                }
-//            }
-//
-//            if (product != null) {
-//                product.setImages(imageNames);
-//            }
-//            return product;
-//        } catch (SQLException e) {
-//            throw new RuntimeException(e);
-//        }
-
         String productQuery = "SELECT id, product_name, quantity FROM shopee_db2.product WHERE id = ?";
 
         Connection conn = dbConnect.getConnection();
@@ -161,38 +131,6 @@ public class ProductDAO {
 
     public boolean delete(int id) {
         Connection connection = dbConnect.getConnection();
-//        List<String> images = new ArrayList<>();
-//        String selectImageQuery = "SELECT image_name FROM shopee_db2.image WHERE product_id = ?";
-//        try (PreparedStatement stmt = connection.prepareStatement(selectImageQuery)) {
-//            stmt.setInt(1, id);
-//            ResultSet resultSet = stmt.executeQuery();
-//            while (resultSet.next()) {
-//                images.add(resultSet.getString("image_name"));
-//            }
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//            return false;
-//        }
-//
-//        String deleteProductQuery = "DELETE FROM shopee_db2.product WHERE id = ?";
-//        try (PreparedStatement stmt = connection.prepareStatement(deleteProductQuery)) {
-//            stmt.setInt(1, id);
-//            int rowsAffected = stmt.executeUpdate();
-//
-//            if (rowsAffected > 0) {
-//                for (String imageName : images) {
-//                    File file = new File("D:\\Workspace\\Java\\Java-servlet\\hoc-ngoai\\session1\\target\\session1-1.0-SNAPSHOT\\uploads" + imageName);
-//                    if (file.exists()) {
-//                        file.delete();
-//                    }
-//                }
-//                return true;
-//            }
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        }
-//        return false;
-
         try {
             connection.setAutoCommit(false);
 
@@ -280,34 +218,6 @@ public class ProductDAO {
 
     public boolean addProduct(Product product) {
         Connection connection = dbConnect.getConnection();
-//        String productQuery = "INSERT INTO shopee_db2.product (product_name, quantity) VALUES (?, ?)";
-//        String imageQuery = "INSERT INTO shopee_db2.image (image_name, product_id) VALUES (?, ?)";
-
-//        try (PreparedStatement productStmt = connection.prepareStatement(productQuery, Statement.RETURN_GENERATED_KEYS)) {
-//            productStmt.setString(1, product.getName());
-//            productStmt.setInt(2, product.getQuantity());
-//            productStmt.executeUpdate();
-//
-//            ResultSet generatedKeys = productStmt.getGeneratedKeys();
-//            if (generatedKeys.next()) {
-//                int productId = generatedKeys.getInt(1);
-////                addProductColors(productId, product.getColors());
-////                addProductImages(productId, product.getImages());
-//
-//                try (PreparedStatement imageStmt = connection.prepareStatement(imageQuery)) {
-//                    for (String imageName : product.getImages()) {
-//                        imageStmt.setString(1, imageName);
-//                        imageStmt.setInt(2, productId);
-//                        imageStmt.executeUpdate();
-//                    }
-//                }
-//                return true;
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return false;
-
         try {
             connection.setAutoCommit(false);
 
@@ -392,38 +302,6 @@ public class ProductDAO {
     }
 
     public boolean update(Product product, boolean isImageUpdated) {
-//        Connection connection = dbConnect.getConnection();
-//        String updateQuery = "UPDATE shopee_db2.product SET product_name = ?, quantity = ? WHERE id = ?";
-//        try (PreparedStatement stmt = connection.prepareStatement(updateQuery)) {
-//            stmt.setString(1, product.getName());
-//            stmt.setInt(2, product.getQuantity());
-//            stmt.setInt(3, product.getId());
-//            stmt.executeUpdate();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        String deleteImageQuery = "DELETE FROM shopee_db2.image WHERE product_id = ?";
-//        try (PreparedStatement stmt = connection.prepareStatement(deleteImageQuery)) {
-//            stmt.setInt(1, product.getId());
-//            stmt.executeUpdate();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//
-//        String insertImageQuery = "INSERT INTO shoppe_db2.image (image_name, product_id) VALUES (?, ?)";
-//        try (PreparedStatement stmt = connection.prepareStatement(insertImageQuery)) {
-//            for (String imageName : product.getImages()) {
-//                stmt.setString(1, imageName);
-//                stmt.setInt(2, product.getId());
-//                stmt.addBatch();
-//            }
-//            stmt.executeBatch();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return false;
-
         Connection connection = dbConnect.getConnection();
         boolean result = false;
 
@@ -437,26 +315,19 @@ public class ProductDAO {
                 productStmt.setInt(3, product.getId());
                 productStmt.executeUpdate();
             }
-            if (isImageUpdated && product.getImages() != null && !product.getImages().isEmpty()) {
-                String deleteImageQuery = "DELETE FROM shopee_db2.image WHERE product_id = ?";
-                try (PreparedStatement stmt = connection.prepareStatement(deleteImageQuery)) {
-                    stmt.setInt(1, product.getId());
-                    stmt.executeUpdate();
-                }
 
-                String insertImageQuery = "INSERT INTO shopee_db2.image (image_name, product_id) VALUES (?, ?)";
-                try (PreparedStatement stmt = connection.prepareStatement(insertImageQuery)) {
-                    for (String imageName : product.getImages()) {
-                        stmt.setString(1, imageName);
-                        stmt.setInt(2, product.getId());
-                        stmt.addBatch();
-                    }
-                    stmt.executeBatch();
-                }
+            deleteProductColors(connection, product.getId());
+            deleteProductSizes(connection, product.getId());
+
+            addProductColors(connection, product.getId(), product.getColors());
+            addProductSizes(connection, product.getId(), product.getSizes());
+
+            if (isImageUpdated && product.getImages() != null && !product.getImages().isEmpty()) {
+                deleteProductImages(connection, product.getId());
+                addProductImages(connection, product.getId(), product.getImages());
             }
             connection.commit();
             result = true;
-
         } catch (SQLException e) {
             try {
                 if (connection != null) {

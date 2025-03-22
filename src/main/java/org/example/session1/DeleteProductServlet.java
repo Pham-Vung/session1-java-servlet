@@ -1,7 +1,5 @@
 package org.example.session1;
 
-import jakarta.servlet.ServletConfig;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,11 +14,11 @@ public class DeleteProductServlet extends HttpServlet {
 
     @Override
     public void init() {
-       productDAO = new ProductDAO();
+        productDAO = new ProductDAO();
     }
 
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         int id = Integer.parseInt(req.getParameter("id"));
         boolean result = productDAO.delete(id);
         if (result) {

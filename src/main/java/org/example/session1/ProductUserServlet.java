@@ -26,8 +26,6 @@ public class ProductUserServlet extends HttpServlet {
         List<Product> products;
         products = productDAO.getUserProducts();
 
-//        HttpSession session = req.getSession();
-//        session.setAttribute("products", products);
         req.setAttribute("products", products);
         RequestDispatcher dispatcher = req.getRequestDispatcher("product-user.jsp");
         dispatcher.forward(req, resp);

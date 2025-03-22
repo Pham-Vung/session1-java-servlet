@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import org.example.session1.DAO.ProductDAO;
-import org.example.session1.DAO.SizeDAO;
 import org.example.session1.entity.Color;
 import org.example.session1.entity.Product;
 import org.example.session1.entity.Size;
@@ -26,12 +25,10 @@ import java.util.List;
 )
 public class UpdateProductServlet extends HttpServlet {
     private ProductDAO productDAO;
-    private SizeDAO sizeDAO;
 
     @Override
     public void init() {
         productDAO = new ProductDAO();
-        sizeDAO = new SizeDAO();
     }
 
     @Override

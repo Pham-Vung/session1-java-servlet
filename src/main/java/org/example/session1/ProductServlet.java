@@ -36,8 +36,6 @@ public class ProductServlet extends HttpServlet {
         List<Color> colors = colorDAO.getAllColors();
         List<Size> sizes = sizeDAO.getAllSizes();
 
-//        HttpSession session = req.getSession();
-//        session.setAttribute("products", products);
         req.setAttribute("products", products);
         req.setAttribute("colors", colors);
         req.setAttribute("sizes", sizes);
