@@ -7,9 +7,8 @@ import org.example.session1.util.DbConnect;
 
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 public class ProductDAO {
     private final DbConnect dbConnect = new DbConnect("jdbc:mysql://localhost:3306/shopee_db2", "root", "root");
@@ -352,35 +351,57 @@ public class ProductDAO {
         return result;
     }
 
-    public List<Product> getUserProducts() {
-        String query = "SELECT p.id, p.product_name, p.quantity, i.image_name AS image_name " +
-                "FROM shopee_db2.product p LEFT JOIN shopee_db2.image i ON p.id = i.product_id " +
-                "ORDER BY p.id";
-        Connection conn = dbConnect.getConnection();
+    public List<Product> getUserProducts() throws SQLException {
+        Connection connection = dbConnect.getConnection();
+        String query = "SELECT " +
+                "p.id AS product_id, p.product_name, p.quantity, " +
+                "GROUP_CONCAT(DISTINCT i.image_name ORDER BY i.image_name SEPARATOR ',') AS images, " +
+                "GROUP_CONCAT(DISTINCT c.color_name ORDER BY c.color_name SEPARATOR ',') AS colors, " +
+                "GROUP_CONCAT(DISTINCT s.size_name ORDER BY s.size_name SEPARATOR ',') AS sizes " +
+                "FROM shopee_db2.product p " +
+                "LEFT JOIN shopee_db2.image i ON p.id = i.product_id " +
+                "LEFT JOIN shopee_db2.product_color pc ON p.id = pc.product_id " +
+                "LEFT JOIN shopee_db2.color c ON pc.color_id = c.id " +
+                "LEFT JOIN shopee_db2.product_size ps ON p.id = ps.product_id " +
+                "LEFT JOIN shopee_db2.size s ON ps.size_id = s.id " +
+                "GROUP BY p.id;";
+        PreparedStatement stmt = connection.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery();
+        List<Product> products = new ArrayList<>();
 
-        Map<Integer, Product> productMap = new HashMap<>();
+        while (rs.next()) {
+            int productId = rs.getInt("product_id");
+            String productName = rs.getString("product_name");
+            int quantity = rs.getInt("quantity");
 
-        try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                int id = rs.getInt("id");
-                String productName = rs.getString("product_name");
-                int quantity = rs.getInt("quantity");
-                String imageName = rs.getString("image_name");
+            Product product = new Product(productId, productName, quantity);
 
-                Product product = productMap.get(id);
-                if (product == null) {
-                    product = new Product(id, productName, quantity, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
-                    productMap.put(id, product);
-                }
-
-                if (imageName != null) {
-                    product.getImages().add(imageName);
-                }
+            String images = rs.getString("images");
+            if (images != null) {
+                List<String> imageList = new ArrayList<>(Arrays.asList(images.split(",")));
+                product.setImages(imageList);
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
+
+            String colors = rs.getString("colors");
+            if (colors != null) {
+                List<Color> colorList = new ArrayList<>();
+                for (String color : colors.split(",")) {
+                    colorList.add(new Color(color));
+                }
+                product.setColors(colorList);
+            }
+
+            String sizes = rs.getString("sizes");
+            if (sizes != null) {
+                List<Size> sizeList = new ArrayList<>();
+                for (String sizeName : sizes.split(",")) {
+                    sizeList.add(new Size(sizeName));
+                }
+                product.setSizes(sizeList);
+            }
+
+            products.add(product);
         }
-        return new ArrayList<>(productMap.values());
+        return products;
     }
 }
