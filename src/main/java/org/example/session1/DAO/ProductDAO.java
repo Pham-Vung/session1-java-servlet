@@ -404,4 +404,61 @@ public class ProductDAO {
         }
         return products;
     }
+
+    public Product getProductUserById(int id) {
+        Connection connection = dbConnect.getConnection();
+        String query = "SELECT p.id AS product_id, p.product_name, p.quantity, " +
+                "GROUP_CONCAT(DISTINCT i.image_name ORDER BY i.image_name SEPARATOR ',') AS images, " +
+                "GROUP_CONCAT(DISTINCT c.color_name ORDER BY c.color_name SEPARATOR ',') AS colors, " +
+                "GROUP_CONCAT(DISTINCT s.size_name ORDER BY s.size_name SEPARATOR ',') AS sizes " +
+                "FROM shopee_db2.product p " +
+                "LEFT JOIN shopee_db2.image i ON p.id = i.product_id " +
+                "LEFT JOIN shopee_db2.product_color pc ON p.id = pc.product_id " +
+                "LEFT JOIN shopee_db2.color c ON pc.color_id = c.id " +
+                "LEFT JOIN shopee_db2.product_size ps ON p.id = ps.product_id " +
+                "LEFT JOIN shopee_db2.size s ON ps.size_id = s.id " +
+                "WHERE p.id = ? " +
+                "GROUP BY p.id";
+
+        try {
+            PreparedStatement stmt = connection.prepareStatement(query);
+            stmt.setInt(1, id);
+            ResultSet rs = stmt.executeQuery();
+
+            if (rs.next()) {
+                String productName = rs.getString("product_name");
+                int quantity = rs.getInt("quantity");
+                Product product = new Product(id, productName, quantity);
+
+                String images = rs.getString("images");
+                if (images != null) {
+                    List<String> imageList = new ArrayList<>(Arrays.asList(images.split(",")));
+                    product.setImages(imageList);
+                }
+
+                String colors = rs.getString("colors");
+                if (colors != null) {
+                    List<Color> colorList = new ArrayList<>();
+                    for (String color : colors.split(",")) {
+                        colorList.add(new Color(color));
+                    }
+                    product.setColors(colorList);
+                }
+
+                String sizes = rs.getString("sizes");
+                if (sizes != null) {
+                    List<Size> sizeList = new ArrayList<>();
+                    for (String size : sizes.split(",")) {
+                        sizeList.add(new Size(size));
+                    }
+                    product.setSizes(sizeList);
+                }
+
+                return product;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return null;
+    }
 }

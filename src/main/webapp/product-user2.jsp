@@ -222,6 +222,7 @@
                                 </c:forEach>
                             </ul>
                             <p class="product-name">${product.getName()}</p>
+                            <a style="color: red" href="get-product-user-by-id?id=${product.getId()}">Chi tiết</a>
                             <div class="product-price-info">
                                 <span class="apply-price">143.000<span>đ</span></span>
                                 <span class="discount">
