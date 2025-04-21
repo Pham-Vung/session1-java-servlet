@@ -46,7 +46,8 @@
             </div>
             <div class="header-actions">
                 <div class="header-actions-search">
-                    <input type="text" placeholder="Tìm kiếm sản phẩm..."/>
+                    <input type="text" name="keyword" id="keyword" placeholder="Tìm kiếm sản phẩm..."
+                           onkeyup="fetchSearchProducts()"/>
                     <i class="fa-solid fa-search search-btn"></i>
                 </div>
                 <div class="header-actions-account">
@@ -99,37 +100,37 @@
                     <c:forEach var="color" items="${colors}">
                         <c:if test="${color.getName().equals('Xanh')}">
                             <li>
-                                <input type="radio" id="green" name="color"/>
+                                <input type="radio" id="green" name="color" value="Xanh"/>
                                 <label for="green">Màu xanh</label>
                             </li>
                         </c:if>
                         <c:if test="${color.getName().equals('Đỏ')}">
                             <li>
-                                <input type="radio" id="red" name="color"/>
+                                <input type="radio" id="red" name="color" value="Đỏ"/>
                                 <label for="red">Màu đỏ</label>
                             </li>
                         </c:if>
                         <c:if test="${color.getName().equals('Tím')}">
                             <li>
-                                <input type="radio" id="purple" name="color">
+                                <input type="radio" id="purple" name="color" value="Tím">
                                 <label for="purple">Màu tím</label>
                             </li>
                         </c:if>
                         <c:if test="${color.getName().equals('Vàng')}">
                             <li>
-                                <input type="radio" id="yellow" name="color"/>
+                                <input type="radio" id="yellow" name="color" value="Vàng"/>
                                 <label for="yellow">Màu vàng</label>
                             </li>
                         </c:if>
                         <c:if test="${color.getName().equals('Đen')}">
                             <li>
-                                <input type="radio" id="black" name="color"/>
+                                <input type="radio" id="black" name="color" value="Đen"/>
                                 <label for="black">Màu đen</label>
                             </li>
                         </c:if>
                         <c:if test="${color.getName().equals('Trắng')}">
                             <li>
-                                <input type="radio" id="white" name="color"/>
+                                <input type="radio" id="white" name="color" value="Trắng"/>
                                 <label for="white">Màu trắng</label>
                             </li>
                         </c:if>
@@ -154,11 +155,15 @@
                     <div class="product-item">
                         <div class="rating">5<i class="fa-solid fa-star"></i><span class="rating-count">(2)</span></div>
                         <div class="product-image">
-                            <c:forEach var="productItemImage" items="${product.getImages()}">
-                                <img class="main-img"
-                                     src="uploads/${productItemImage}"
-                                     alt="main-img"/>
-                            </c:forEach>
+<%--                            <c:forEach var="productItemImage" items="${product.getImages()}">--%>
+<%--                                <img class="main-img"--%>
+<%--                                     src="uploads/${productItemImage}"--%>
+<%--                                     alt="main-img"/>--%>
+<%--                            </c:forEach>--%>
+
+    <c:if test="${not empty product.getImages()}">
+        <img class="main-img" src="uploads/${product.getImages().get(0)}">
+    </c:if>
                             <div class="size-in-stock">
                                 <span class="size-title">Thêm nhanh vào giỏ hàng +</span>
                                 <ul class="size-btns">
@@ -241,6 +246,61 @@
     <footer></footer>
 </div>
 <script src="./dist/js/main.js"></script>
+<script>
+    const fetchSearchProducts = () => {
+        var keyword = document.getElementById("keyword").value;
+        fetch("search-product-user?keyword=" + encodeURIComponent(keyword))
+            .then(res => res.json())
+            .then(result => {
+                console.log(result);
+                renderProductsUser(result);
+            })
+            .catch(err => console.error(err));
+    }
+
+    const renderProductsUser = (data) => {
+        let html = "";
+        data.forEach(p => {
+            const imageHtml = p.images.length > 0 ? `<img class="main-img" src="uploads/${p.images[0]}">` : "";
+
+            const sizeHtml = p.sizes.map(size =>
+                `<li class="sz-item">${size.name}</li>`
+            ).join("");
+
+            const colorHtml = p.colors.map(color =>
+                `<li>
+                     <input type="radio" id="pr-1-${color.name}" name="pr-1-color">
+                     <label for="pr-1-${color}">${color.name}</label>
+                </li>`
+            ).join("");
+
+            html += `
+            <div class="product-item">
+                <div class="rating">5<i class="fa-solid fa-star"></i><span class="rating-count">(2)</span></div>
+                <div class="product-image">
+                    ${imageHtml}
+                    <div class="size-in-stock">
+                        <span class="size-title">Thêm nhanh vào giỏ hàng +</span>
+                        <ul class="size-btns">${sizeHtml}</ul>
+                    </div>
+                </div>
+                <div class="product-info">
+                    <ul class="color-in-stock">${colorHtml}</ul>
+                    <p class="product-name">${p.name}</p>
+                    <a style="color: red" href="get-product-user-by-id?id=${p.id}">Chi tiết</a>
+                    <div class="product-price-info">
+                        <span class="apply-price">143.000<span>đ</span></span>
+                        <span class="discount"><p>-</p><p>20</p><p>%</p></span>
+                        <span class="raw-price">179.000<span>đ</span></span>
+                    </div>
+                </div>
+            </div>
+            `;
+        });
+
+        document.querySelector(".product-grid").innerHTML = html;
+    }
+</script>
 <%--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"--%>
 <%--        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"--%>
 <%--        crossorigin="anonymous"></script>--%>
